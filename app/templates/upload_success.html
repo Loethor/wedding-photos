@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+Upload completed
+{% endblock %}
+
+
+{% block content %}
+
+<h1>✅ Upload completed</h1>
+
+<p>
+    Your photos and videos were uploaded successfully.
+</p>
+
+<p>
+    Files uploaded: {{ count }}
+</p>
+
+<a class="button" href="/">
+    Upload more
+</a>
+
+
+{% endblock %}

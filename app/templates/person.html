@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ person }}
+{% endblock %}
+
+
+{% block content %}
+
+<a class="button" href="/gallery">
+    ← People
+</a>
+
+<h1>{{ person }}</h1>
+
+<div class="gallery">
+
+    {% for file in files %}
+
+    <a href="/storage/{{ person }}/{{ file.name }}">
+        <img src="/storage/.thumbnails/{{ person }}/{{ file.name }}" alt="{{ file.name }}">
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

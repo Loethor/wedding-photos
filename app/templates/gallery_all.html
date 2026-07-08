@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+All Photos
+{% endblock %}
+
+
+{% block content %}
+
+<a class="button" href="/gallery">
+    ← Gallery
+</a>
+
+<h1>📸 All photos</h1>
+
+<div class="gallery">
+
+    {% for person, file in files %}
+
+    <a href="/storage/{{ person }}/{{ file.name }}">
+
+        <img src="/storage/.thumbnails/{{ person }}/{{ file.name }}" alt="{{ file.name }}">
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
