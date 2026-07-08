@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Upload photos
+Upload Photos
 {% endblock %}
 
 
@@ -11,8 +11,95 @@ Upload photos
 
 <form id="upload-form">
 
-    ...
+    <label>
+        First name:
+        <input name="first_name" required>
+    </label>
+
+    <br><br>
+
+    <label>
+        Last name:
+        <input name="last_name" required>
+    </label>
+
+    <br><br>
+
+    <label>
+        Select photos/videos:
+        <input id="files" type="file" name="files" multiple accept="image/*,video/*" required>
+    </label>
+
+    <br><br>
+
+    <button type="submit">
+        Upload
+    </button>
 
 </form>
+
+<p id="status"></p>
+
+
+<script>
+
+    const form = document.getElementById("upload-form");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const files = document.getElementById("files").files;
+
+        status.innerText =
+            `Uploading 0 / ${files.length} files`;
+
+        const data = new FormData(form);
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("POST", "/upload");
+
+
+        xhr.upload.onprogress = function (event) {
+
+            if (event.lengthComputable) {
+
+                const percent =
+                    Math.round(
+                        (event.loaded / event.total) * 100
+                    );
+
+                status.innerText =
+                    `Uploading... ${percent}% (${files.length} files)`;
+            }
+        };
+
+
+        xhr.onload = function () {
+
+            if (xhr.status === 200) {
+
+                status.innerText =
+                    `✅ Upload completed: ${files.length} files`;
+
+                form.reset();
+
+            } else {
+
+                status.innerText =
+                    "❌ Upload failed";
+            }
+
+        };
+
+
+        xhr.send(data);
+
+    });
+
+</script>
+
 
 {% endblock %}
