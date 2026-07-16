@@ -1,18 +1,13 @@
-import logging
-
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 
 from app.config import WEDDING_PASSWORD
 from app.services.rate_limit import RateLimiter
 
+from app.logger import logger
+from app.web import templates
 
 router = APIRouter()
-
-templates = Jinja2Templates(directory="app/templates")
-
-logger = logging.getLogger("wedding-photos")
 
 
 login_limiter = RateLimiter(
