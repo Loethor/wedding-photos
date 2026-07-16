@@ -79,18 +79,9 @@ Upload Photos
 
         xhr.onload = function () {
 
-            if (xhr.status === 200) {
-
-                status.innerText =
-                    `✅ Upload completed: ${files.length} files`;
-
-                form.reset();
-
-            } else {
-
-                status.innerText =
-                    "❌ Upload failed";
-            }
+            document.open();
+            document.write(xhr.responseText);
+            document.close();
 
         };
 
