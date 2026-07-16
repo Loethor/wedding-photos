@@ -13,18 +13,25 @@ def get_user_folder(username: str) -> Path:
     return folder
 
 
-def save_file(username: str, filename: str, content: bytes) -> Path:
+def save_file(username: str, filename: str, source) -> Path:
+
     folder = get_user_folder(username)
+
+    filename = sanitize_filename(filename)
 
     target = folder / filename
 
-    # Evitar sobrescribir
+    if target.suffix.lower() not in ALLOWED_EXTENSIONS:
+        raise ValueError("File type not allowed")
+
     counter = 1
     while target.exists():
         target = folder / f"{target.stem}_{counter}{target.suffix}"
         counter += 1
 
-    target.write_bytes(content)
+    with target.open("wb") as f:
+        while chunk := source.read(1024 * 1024):
+            f.write(chunk)
 
     return target
 
@@ -42,6 +49,25 @@ def sanitize_folder_name(value: str) -> str:
     return value.strip("_")
 
 
+def sanitize_filename(value: str) -> str:
+    # quitar ruta si viene incluida
+    value = Path(value).name
+
+    # normalizar unicode (HEIC/iPhone puede traer caracteres raros)
+    value = (
+        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    )
+
+    # conservar extensión
+    suffix = Path(value).suffix.lower()
+    stem = Path(value).stem
+
+    stem = re.sub(r"[^a-zA-Z0-9]+", "_", stem)
+    stem = stem.strip("_")
+
+    return f"{stem}{suffix}"
+
+
 IMAGE_EXTENSIONS = {
     ".jpg",
     ".jpeg",
@@ -55,7 +81,6 @@ VIDEO_EXTENSIONS = {
     ".mp4",
     ".mov",
     ".m4v",
-    ".avi",
 }
 
 ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS

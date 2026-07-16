@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
+from fastapi import HTTPException
 
 from app.services.storage import (
     list_people,
@@ -19,8 +20,14 @@ from app.services.thumbnails import create_thumbnail
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.responses import RedirectResponse
-
-from app.config import PHOTO_STORAGE, SECRET_KEY, WEDDING_PASSWORD
+from app.services.security import safe_path
+from app.config import (
+    PHOTO_STORAGE,
+    SECRET_KEY,
+    WEDDING_PASSWORD,
+    MAX_UPLOAD_SIZE,
+    UPLOAD_CHUNK_SIZE,
+)
 
 
 class AuthenticationMiddleware(BaseHTTPMiddleware):
@@ -91,6 +98,9 @@ def serve_photo(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
 
+    if not safe_path(file):
+        return {"error": "Invalid path"}
+
     if not file.exists():
         return {"error": "File not found"}
 
@@ -101,6 +111,9 @@ def serve_photo(person: str, filename: str):
 def serve_video(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
+
+    if not safe_path(file):
+        return {"error": "Invalid path"}
 
     if not file.exists():
         return {"error": "Video not found"}
@@ -113,6 +126,9 @@ def download_file(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
 
+    if not safe_path(file):
+        return {"error": "Invalid path"}
+
     if not file.exists():
         return {"error": "File not found"}
 
@@ -123,6 +139,9 @@ def download_file(person: str, filename: str):
 def serve_thumbnail(person: str, filename: str):
 
     file = PHOTO_STORAGE / ".thumbnails" / person / filename
+
+    if not safe_path(file):
+        return {"error": "Invalid path"}
 
     if not file.exists():
         return {"error": "Thumbnail not found"}
@@ -141,12 +160,23 @@ async def upload(
     uploaded = []
 
     for file in files:
-        content = await file.read()
+        size = 0
+
+        while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+            size += len(chunk)
+
+            if size > MAX_UPLOAD_SIZE:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"{file.filename} is too large",
+                )
+
+        await file.seek(0)
 
         saved = save_file(
             username,
             file.filename,
-            content,
+            file.file,
         )
 
         create_thumbnail(
