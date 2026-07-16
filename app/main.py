@@ -186,9 +186,7 @@ def gallery_person(request: Request, person: str):
     files = []
 
     for file in list_files(folder):
-        if is_image(file):
-            create_thumbnail(person, file)
-
+        create_thumbnail(person, file)
         files.append(file)
 
     return templates.TemplateResponse(

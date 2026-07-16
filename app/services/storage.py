@@ -51,11 +51,14 @@ IMAGE_EXTENSIONS = {
     ".heif",
 }
 
-ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | {
+VIDEO_EXTENSIONS = {
     ".mp4",
     ".mov",
     ".m4v",
+    ".avi",
 }
+
+ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
 
 
 def list_people() -> list[str]:
