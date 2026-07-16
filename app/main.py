@@ -97,6 +97,28 @@ def serve_photo(person: str, filename: str):
     return FileResponse(file)
 
 
+@app.get("/video/{person}/{filename}")
+def serve_video(person: str, filename: str):
+
+    file = PHOTO_STORAGE / person / filename
+
+    if not file.exists():
+        return {"error": "Video not found"}
+
+    return FileResponse(file, media_type="video/mp4")
+
+
+@app.get("/download/{person}/{filename}")
+def download_file(person: str, filename: str):
+
+    file = PHOTO_STORAGE / person / filename
+
+    if not file.exists():
+        return {"error": "File not found"}
+
+    return FileResponse(file, filename=file.name)
+
+
 @app.get("/thumbnail/{person}/{filename}")
 def serve_thumbnail(person: str, filename: str):
 
@@ -148,6 +170,13 @@ def gallery_all(request: Request):
 
 def is_image(file: Path) -> bool:
     return file.suffix.lower() in IMAGE_EXTENSIONS
+
+
+def is_video(file: Path) -> bool:
+    return file.suffix.lower() in {
+        ".mp4",
+        ".mov",
+    }
 
 
 @app.get("/gallery/{person}", response_class=HTMLResponse)
