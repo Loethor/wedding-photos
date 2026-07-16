@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from app.config import PHOTO_STORAGE
@@ -8,16 +8,30 @@ from app.services.security import safe_path
 router = APIRouter()
 
 
+def validate_file(file, error_message: str):
+
+    if not safe_path(file):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid path",
+        )
+
+    if not file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=error_message,
+        )
+
+
 @router.get("/photo/{person}/{filename}")
 def serve_photo(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
 
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "File not found"}
+    validate_file(
+        file,
+        "File not found",
+    )
 
     return FileResponse(file)
 
@@ -27,11 +41,10 @@ def serve_video(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
 
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "Video not found"}
+    validate_file(
+        file,
+        "Video not found",
+    )
 
     return FileResponse(
         file,
@@ -44,11 +57,10 @@ def download_file(person: str, filename: str):
 
     file = PHOTO_STORAGE / person / filename
 
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "File not found"}
+    validate_file(
+        file,
+        "File not found",
+    )
 
     return FileResponse(
         file,
@@ -61,10 +73,9 @@ def serve_thumbnail(person: str, filename: str):
 
     file = PHOTO_STORAGE / ".thumbnails" / person / filename
 
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "Thumbnail not found"}
+    validate_file(
+        file,
+        "Thumbnail not found",
+    )
 
     return FileResponse(file)
