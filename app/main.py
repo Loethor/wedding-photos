@@ -143,12 +143,26 @@ async def upload(
     for file in files:
         content = await file.read()
 
-        saved = save_file(username, file.filename, content)
+        saved = save_file(
+            username,
+            file.filename,
+            content,
+        )
 
-        uploaded.append(str(saved))
+        create_thumbnail(
+            username,
+            saved,
+        )
+
+        uploaded.append(saved.name)
 
     return templates.TemplateResponse(
-        request=request, name="upload_success.html", context={"count": len(uploaded)}
+        request=request,
+        name="upload_success.html",
+        context={
+            "count": len(uploaded),
+            "files": uploaded,
+        },
     )
 
 
@@ -186,7 +200,6 @@ def gallery_person(request: Request, person: str):
     files = []
 
     for file in list_files(folder):
-        create_thumbnail(person, file)
         files.append(file)
 
     return templates.TemplateResponse(
