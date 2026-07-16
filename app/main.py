@@ -23,7 +23,30 @@ from fastapi.responses import RedirectResponse
 
 from app.config import PHOTO_STORAGE, SECRET_KEY, WEDDING_PASSWORD
 
+
+class AuthenticationMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+
+        public_paths = {
+            "/login",
+            "/favicon.ico",
+        }
+
+        if request.url.path in public_paths or request.url.path.startswith("/storage/"):
+            return await call_next(request)
+
+        if request.session.get("authenticated"):
+            return await call_next(request)
+
+        return RedirectResponse("/login", status_code=303)
+
+
 app = FastAPI()
+
+app.add_middleware(
+    AuthenticationMiddleware,
+)
+
 app.add_middleware(
     SessionMiddleware,
     secret_key=SECRET_KEY,
@@ -65,23 +88,6 @@ def login(
     request.session["authenticated"] = True
 
     return RedirectResponse("/", status_code=303)
-
-
-@app.middleware("http")
-async def authentication(request: Request, call_next):
-    print(request.scope.get("session"))
-    public_paths = {
-        "/login",
-        "/favicon.ico",
-    }
-
-    if request.url.path.startswith("/storage/") or request.url.path in public_paths:
-        return await call_next(request)
-
-    if request.session.get("authenticated"):
-        return await call_next(request)
-
-    return RedirectResponse("/login", status_code=303)
 
 
 @app.get("/", response_class=HTMLResponse)
