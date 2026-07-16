@@ -17,7 +17,7 @@
 
     {% for file in files %}
 
-    {% if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"] %}
+    {% if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"] %}
 
     <a href="/photo/{{ person }}/{{ file.name }}">
         <img src="/thumbnail/{{ person }}/{{ file.stem }}.jpg">
