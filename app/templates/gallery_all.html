@@ -17,9 +17,8 @@ All Photos
 
     {% for person, file in files %}
 
-    <a href="/storage/{{ person }}/{{ file.name }}">
-
-        <img src="/storage/.thumbnails/{{ person }}/{{ file.name }}" alt="{{ file.name }}">
+    <a href="/photo/{{ person }}/{{ file.name }}">
+        <img src="/thumbnail/{{ person }}/{{ file.name }}" alt="{{ file.name }}">
 
     </a>
 

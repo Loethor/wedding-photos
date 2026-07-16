@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, Request, UploadFile, File, Form
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 
 from app.services.storage import (
@@ -13,7 +13,6 @@ from app.services.storage import (
 
 from app.services.storage import save_file
 
-from fastapi.staticfiles import StaticFiles
 
 from app.services.thumbnails import create_thumbnail
 
@@ -32,7 +31,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             "/favicon.ico",
         }
 
-        if request.url.path in public_paths or request.url.path.startswith("/storage/"):
+        if request.url.path in public_paths:
             return await call_next(request)
 
         if request.session.get("authenticated"):
@@ -53,15 +52,7 @@ app.add_middleware(
     max_age=60 * 60 * 24 * 30,
 )
 
-print("Session middleware added")
-
 templates = Jinja2Templates(directory="app/templates")
-
-app.mount(
-    "/storage",
-    StaticFiles(directory=PHOTO_STORAGE),
-    name="storage",
-)
 
 
 @app.get("/login", response_class=HTMLResponse)
@@ -93,6 +84,28 @@ def login(
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse(request=request, name="index.html", context={})
+
+
+@app.get("/photo/{person}/{filename}")
+def serve_photo(person: str, filename: str):
+
+    file = PHOTO_STORAGE / person / filename
+
+    if not file.exists():
+        return {"error": "File not found"}
+
+    return FileResponse(file)
+
+
+@app.get("/thumbnail/{person}/{filename}")
+def serve_thumbnail(person: str, filename: str):
+
+    file = PHOTO_STORAGE / ".thumbnails" / person / filename
+
+    if not file.exists():
+        return {"error": "Thumbnail not found"}
+
+    return FileResponse(file)
 
 
 @app.post("/upload")
