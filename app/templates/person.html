@@ -20,7 +20,7 @@
     {% if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"] %}
 
     <a href="/photo/{{ person }}/{{ file.name }}">
-        <img src="/thumbnail/{{ person }}/{{ file.name }}">
+        <img src="/thumbnail/{{ person }}/{{ file.stem }}.jpg">
     </a>
 
     {% elif file.suffix.lower() in [".mp4", ".mov"] %}
