@@ -31,7 +31,11 @@ app.add_middleware(
 
 templates = Jinja2Templates(directory="app/templates")
 
-app.mount("/storage", StaticFiles(directory="storage"), name="storage")
+app.mount(
+    "/storage",
+    StaticFiles(directory=PHOTO_STORAGE),
+    name="storage",
+)
 
 
 @app.get("/login", response_class=HTMLResponse)
