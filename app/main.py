@@ -1,17 +1,13 @@
-from pathlib import Path
-
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import HTTPException
 
-from fastapi.exceptions import RequestValidationError
 
 from app.services.storage import (
     list_people,
     list_files,
     get_all_files,
-    IMAGE_EXTENSIONS,
 )
 
 from app.services.storage import save_file
@@ -19,42 +15,24 @@ from app.services.storage import save_file
 
 from app.services.thumbnails import create_thumbnail
 
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from fastapi.responses import RedirectResponse
 from app.services.security import safe_path
-from app.config import (
-    PHOTO_STORAGE,
-    SECRET_KEY,
-    WEDDING_PASSWORD,
-    MAX_UPLOAD_SIZE,
-    UPLOAD_CHUNK_SIZE,
-)
+from app.config import PHOTO_STORAGE, SECRET_KEY, MAX_UPLOAD_SIZE
+
+from app.middleware.authentication import AuthenticationMiddleware
+
 
 import logging
+
+from app.routes import auth, files
 
 logger = logging.getLogger("wedding-photos")
 logging.basicConfig(level=logging.INFO)
 
 
-class AuthenticationMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-
-        public_paths = {
-            "/login",
-            "/favicon.ico",
-        }
-
-        if request.url.path in public_paths:
-            return await call_next(request)
-
-        if request.session.get("authenticated"):
-            return await call_next(request)
-
-        return RedirectResponse("/login", status_code=303)
-
-
 app = FastAPI()
+app.include_router(auth.router)
+app.include_router(files.router)
 
 app.add_middleware(
     AuthenticationMiddleware,
@@ -64,6 +42,8 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SECRET_KEY,
     max_age=60 * 60 * 24 * 30,
+    https_only=True,
+    same_site="lax",
 )
 
 templates = Jinja2Templates(directory="app/templates")
@@ -82,77 +62,9 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
-@app.get("/login", response_class=HTMLResponse)
-def login_page(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="login.html",
-        context={"error": False},
-    )
-
-
-@app.post("/login")
-def login(
-    request: Request,
-    password: str = Form(...),
-):
-    if password != WEDDING_PASSWORD:
-        return templates.TemplateResponse(
-            request=request,
-            name="login.html",
-            context={"error": True},
-        )
-
-    request.session["authenticated"] = True
-
-    return RedirectResponse("/", status_code=303)
-
-
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse(request=request, name="index.html", context={})
-
-
-@app.get("/photo/{person}/{filename}")
-def serve_photo(person: str, filename: str):
-
-    file = PHOTO_STORAGE / person / filename
-
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "File not found"}
-
-    return FileResponse(file)
-
-
-@app.get("/video/{person}/{filename}")
-def serve_video(person: str, filename: str):
-
-    file = PHOTO_STORAGE / person / filename
-
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "Video not found"}
-
-    return FileResponse(file, media_type="video/mp4")
-
-
-@app.get("/download/{person}/{filename}")
-def download_file(person: str, filename: str):
-
-    file = PHOTO_STORAGE / person / filename
-
-    if not safe_path(file):
-        return {"error": "Invalid path"}
-
-    if not file.exists():
-        return {"error": "File not found"}
-
-    return FileResponse(file, filename=file.name)
 
 
 @app.get("/thumbnail/{person}/{filename}")
@@ -253,17 +165,6 @@ def gallery_all(request: Request):
     return templates.TemplateResponse(
         request=request, name="gallery_all.html", context={"files": files}
     )
-
-
-def is_image(file: Path) -> bool:
-    return file.suffix.lower() in IMAGE_EXTENSIONS
-
-
-def is_video(file: Path) -> bool:
-    return file.suffix.lower() in {
-        ".mp4",
-        ".mov",
-    }
 
 
 @app.get("/gallery/{person}", response_class=HTMLResponse)
