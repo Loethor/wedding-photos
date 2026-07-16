@@ -17,6 +17,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.services.thumbnails import create_thumbnail
 
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.responses import RedirectResponse
 
@@ -28,6 +29,8 @@ app.add_middleware(
     secret_key=SECRET_KEY,
     max_age=60 * 60 * 24 * 30,
 )
+
+print("Session middleware added")
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -66,7 +69,7 @@ def login(
 
 @app.middleware("http")
 async def authentication(request: Request, call_next):
-
+    print(request.scope.get("session"))
     public_paths = {
         "/login",
         "/favicon.ico",
