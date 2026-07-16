@@ -17,13 +17,64 @@ from fastapi.staticfiles import StaticFiles
 
 from app.services.thumbnails import create_thumbnail
 
-from app.config import PHOTO_STORAGE
+from starlette.middleware.sessions import SessionMiddleware
+from fastapi.responses import RedirectResponse
+
+from app.config import PHOTO_STORAGE, SECRET_KEY, WEDDING_PASSWORD
 
 app = FastAPI()
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SECRET_KEY,
+    max_age=60 * 60 * 24 * 30,
+)
 
 templates = Jinja2Templates(directory="app/templates")
 
 app.mount("/storage", StaticFiles(directory="storage"), name="storage")
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={"error": False},
+    )
+
+
+@app.post("/login")
+def login(
+    request: Request,
+    password: str = Form(...),
+):
+    if password != WEDDING_PASSWORD:
+        return templates.TemplateResponse(
+            request=request,
+            name="login.html",
+            context={"error": True},
+        )
+
+    request.session["authenticated"] = True
+
+    return RedirectResponse("/", status_code=303)
+
+
+@app.middleware("http")
+async def authentication(request: Request, call_next):
+
+    public_paths = {
+        "/login",
+        "/favicon.ico",
+    }
+
+    if request.url.path.startswith("/storage/") or request.url.path in public_paths:
+        return await call_next(request)
+
+    if request.session.get("authenticated"):
+        return await call_next(request)
+
+    return RedirectResponse("/login", status_code=303)
 
 
 @app.get("/", response_class=HTMLResponse)
