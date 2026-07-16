@@ -15,21 +15,21 @@ All Photos
 
 <div class="gallery">
 
-    {% for file in files %}
+    {% for person, file in files %}
 
     {% if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"] %}
 
-    <a href="/photo/{{ person }}/{{ file.name }}">
-        <img src="/thumbnail/{{ person }}/{{ file.stem }}.jpg">
+    <a href="/photo/{{ person }}/{{ file.name | urlencode }}">
+        <img src="/thumbnail/{{ person }}/{{ file.stem | urlencode }}.jpg">
     </a>
 
     {% elif file.suffix.lower() in [".mp4", ".mov"] %}
 
     <video controls width="300">
-        <source src="/video/{{ person }}/{{ file.name }}">
+        <source src="/video/{{ person }}/{{ file.name | urlencode }}">
     </video>
 
-    <a href="/download/{{ person }}/{{ file.name }}">
+    <a href="/download/{{ person }}/{{ file.name | urlencode }}">
         Download
     </a>
 
