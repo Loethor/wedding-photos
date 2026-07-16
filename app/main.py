@@ -5,6 +5,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import HTTPException
 
+from fastapi.exceptions import RequestValidationError
+
 from app.services.storage import (
     list_people,
     list_files,
@@ -28,6 +30,11 @@ from app.config import (
     MAX_UPLOAD_SIZE,
     UPLOAD_CHUNK_SIZE,
 )
+
+import logging
+
+logger = logging.getLogger("wedding-photos")
+logging.basicConfig(level=logging.INFO)
 
 
 class AuthenticationMiddleware(BaseHTTPMiddleware):
@@ -60,6 +67,19 @@ app.add_middleware(
 )
 
 templates = Jinja2Templates(directory="app/templates")
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="error.html",
+        context={
+            "message": exc.detail,
+        },
+        status_code=exc.status_code,
+    )
 
 
 @app.get("/login", response_class=HTMLResponse)
@@ -159,24 +179,41 @@ async def upload(
     username = f"{first_name}_{last_name}"
     uploaded = []
 
+    logger.info(
+        "Upload started: user=%s files=%d",
+        username,
+        len(files),
+    )
+
     for file in files:
-        size = 0
-
-        while chunk := await file.read(UPLOAD_CHUNK_SIZE):
-            size += len(chunk)
-
-            if size > MAX_UPLOAD_SIZE:
-                raise HTTPException(
-                    status_code=413,
-                    detail=f"{file.filename} is too large",
-                )
-
-        await file.seek(0)
-
-        saved = save_file(
-            username,
+        logger.info(
+            "Processing file: %s",
             file.filename,
-            file.file,
+        )
+
+        try:
+            saved, size = save_file(
+                username,
+                file.filename,
+                file.file,
+                MAX_UPLOAD_SIZE,
+            )
+
+        except ValueError:
+            logger.warning(
+                "Upload rejected: %s too large",
+                file.filename,
+            )
+
+            raise HTTPException(
+                status_code=413,
+                detail=f"{file.filename} is too large",
+            )
+
+        logger.info(
+            "Saved %s (%.2f MB)",
+            saved,
+            size / 1024 / 1024,
         )
 
         create_thumbnail(
@@ -185,6 +222,12 @@ async def upload(
         )
 
         uploaded.append(saved.name)
+
+    logger.info(
+        "Upload completed: user=%s files=%d",
+        username,
+        len(uploaded),
+    )
 
     return templates.TemplateResponse(
         request=request,

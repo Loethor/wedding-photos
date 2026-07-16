@@ -13,8 +13,7 @@ def get_user_folder(username: str) -> Path:
     return folder
 
 
-def save_file(username: str, filename: str, source) -> Path:
-
+def save_file(username: str, filename: str, source, max_size: int) -> tuple[Path, int]:
     folder = get_user_folder(username)
 
     filename = sanitize_filename(filename)
@@ -29,11 +28,20 @@ def save_file(username: str, filename: str, source) -> Path:
         target = folder / f"{target.stem}_{counter}{target.suffix}"
         counter += 1
 
+    size = 0
+
     with target.open("wb") as f:
         while chunk := source.read(1024 * 1024):
+            size += len(chunk)
+
+            if size > max_size:
+                target.unlink(missing_ok=True)
+
+                raise ValueError("File too large")
+
             f.write(chunk)
 
-    return target
+    return target, size
 
 
 def sanitize_folder_name(value: str) -> str:

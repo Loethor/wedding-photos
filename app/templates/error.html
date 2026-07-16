@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+Error
+{% endblock %}
+
+{% block content %}
+
+<h1>😢 Upload failed</h1>
+
+<p>
+    {{ message }}
+</p>
+
+<a class="button" href="/">
+    Try again
+</a>
+
+{% endblock %}
