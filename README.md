@@ -268,3 +268,47 @@ Then access through nginx:
 ```
 http://<server-ip>
 ```
+
+## Making a service
+
+Running as a systemd service
+
+Create the service:
+
+`sudo nano /etc/systemd/system/wedding-photos.service`
+
+Example configuration:
+
+```bash
+[Unit]
+Description=Wedding Photos
+After=network.target
+
+[Service]
+Type=simple
+User=<your-user>
+WorkingDirectory=/home/<your-user>/projects/wedding-photos
+
+EnvironmentFile=/home/<your-user>/projects/wedding-photos/.env
+
+ExecStart=/home/<your-user>/.local/bin/uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+Enable and start the service:
+
+`sudo systemctl daemon-reload`
+`sudo systemctl enable wedding-photos`
+`sudo systemctl start wedding-photos`
+
+Useful commands:
+
+`sudo systemctl status wedding-photos`
+`sudo systemctl restart wedding-photos`
+`sudo systemctl stop wedding-photos`
+
+`journalctl -u wedding-photos -f`
