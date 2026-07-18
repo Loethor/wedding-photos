@@ -1,35 +1,115 @@
 {% extends "base.html" %}
 
-{% block title %}
-Gallery
-{% endblock %}
-
+{% block title %}Galería · Luis &amp; Cristina{% endblock %}
+{% block nav_gallery %}active{% endblock %}
 
 {% block content %}
 
-<h1>🖼 Wedding Gallery</h1>
+<div class="page-head">
+    <div class="eyebrow">4 de julio de 2026 · Ponferrada</div>
+    <h1>Nuestra galería</h1>
+    <p>Todas las fotos y vídeos que habéis capturado, reunidos en un mismo lugar.</p>
+</div>
 
+<style>
+    .cta-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 44px;
+    }
 
-<a class="button" href="/gallery/all">
-    📸 All photos
-</a>
+    .people {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 18px;
+    }
 
+    .person-card {
+        display: block;
+        background: var(--card);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--line);
+        transition: transform .16s, box-shadow .16s;
+    }
 
-<h2>People</h2>
+    .person-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 1px 2px rgba(61, 74, 51, .06), 0 26px 50px -22px rgba(61, 74, 51, .4);
+    }
 
-<ul>
+    .person-cover {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        background: var(--bg-sage);
+    }
 
-    {% for person in people %}
+    .person-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+    }
 
-    <li>
-        <a href="/gallery/{{ person }}">
-            {{ person }}
-        </a>
-    </li>
+    .person-card:hover .person-cover img {
+        transform: scale(1.05);
+    }
 
+    .person-cover.blank {
+        display: grid;
+        place-items: center;
+        color: var(--ink-soft);
+    }
+
+    .person-body {
+        padding: 15px 18px 17px;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .person-body h3 {
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .person-body .count {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        white-space: nowrap;
+    }
+</style>
+
+<div class="cta-row">
+    <a class="btn btn-primary" href="/gallery/all">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-4 4 3 3-2 6 4"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+        Ver todas las fotos{% if total %} · {{ total }}{% endif %}
+    </a>
+</div>
+
+{% if people %}
+<div class="people">
+    {% for p in people %}
+    <a class="person-card" href="/gallery/{{ p.name }}">
+        {% if p.cover %}
+        <div class="person-cover"><img loading="lazy" src="{{ p.cover }}" alt="{{ p.display }}"></div>
+        {% else %}
+        <div class="person-cover blank">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        </div>
+        {% endif %}
+        <div class="person-body">
+            <h3>{{ p.display }}</h3>
+            <span class="count">{{ p.count }} archivo{{ "s" if p.count != 1 }}</span>
+        </div>
+    </a>
     {% endfor %}
-
-</ul>
-
+</div>
+{% else %}
+<div class="empty">Todavía no hay álbumes. En cuanto alguien suba fotos, aparecerán aquí.</div>
+{% endif %}
 
 {% endblock %}

@@ -4,12 +4,12 @@ from fastapi import (
     UploadFile,
     File,
     Form,
-    HTTPException,
 )
+from starlette.concurrency import run_in_threadpool
 
 from app.config import MAX_UPLOAD_SIZE
-from app.services.storage import save_file
-from app.services.thumbnails import create_thumbnail
+from app.services.storage import save_file, set_display_name
+from app.services.thumbnails import convert_heif_to_jpeg, create_thumbnail
 from app.logger import logger
 from app.web import templates
 
@@ -24,7 +24,9 @@ async def upload(
     files: list[UploadFile] = File(...),
 ):
     username = f"{first_name}_{last_name}"
-    uploaded = []
+    display_name = f"{first_name.strip()} {last_name.strip()}"
+    uploaded: list[str] = []
+    failed: list[str] = []
 
     logger.info(
         "Upload started: user=%s files=%d",
@@ -33,29 +35,34 @@ async def upload(
     )
 
     for file in files:
+        filename = file.filename
+        if not filename:
+            continue
+
         logger.info(
             "Processing file: %s",
-            file.filename,
+            filename,
         )
 
+        # Guardar en disco (en threadpool para no bloquear el event loop).
         try:
-            saved, size = save_file(
+            saved, size = await run_in_threadpool(
+                save_file,
                 username,
-                file.filename,
+                filename,
                 file.file,
                 MAX_UPLOAD_SIZE,
             )
-
-        except ValueError:
+        except ValueError as exc:
+            # Archivo demasiado grande o tipo no permitido: lo saltamos, pero
+            # no abortamos el resto de la subida.
             logger.warning(
-                "Upload rejected: %s too large",
-                file.filename,
+                "Upload skipped: %s (%s)",
+                filename,
+                exc,
             )
-
-            raise HTTPException(
-                status_code=413,
-                detail=f"{file.filename} is too large",
-            )
+            failed.append(filename)
+            continue
 
         logger.info(
             "Saved %s (%.2f MB)",
@@ -63,17 +70,39 @@ async def upload(
             size / 1024 / 1024,
         )
 
-        create_thumbnail(
-            username,
-            saved,
-        )
+        # Convertir HEIC/HEIF de iPhone a JPEG (si falla, seguimos con el original).
+        try:
+            saved = await run_in_threadpool(convert_heif_to_jpeg, saved)
+        except Exception:
+            logger.exception(
+                "HEIF conversion failed for %s",
+                saved,
+            )
+
+        # La miniatura debe usar el nombre de carpeta ya sanitizado (el mismo que
+        # usan la galería y las URLs), no el username crudo con acentos/espacios.
+        person = saved.parent.name
+
+        # Guardar el nombre original (con acentos) para mostrar en la galería.
+        if not uploaded:
+            set_display_name(saved.parent, display_name)
+
+        # Generar miniatura. Si falla, no abortamos: puede regenerarse al vuelo.
+        try:
+            await run_in_threadpool(create_thumbnail, person, saved)
+        except Exception:
+            logger.exception(
+                "Thumbnail failed for %s",
+                saved,
+            )
 
         uploaded.append(saved.name)
 
     logger.info(
-        "Upload completed: user=%s files=%d",
+        "Upload completed: user=%s uploaded=%d failed=%d",
         username,
         len(uploaded),
+        len(failed),
     )
 
     return templates.TemplateResponse(
@@ -82,5 +111,6 @@ async def upload(
         context={
             "count": len(uploaded),
             "files": uploaded,
+            "failed": failed,
         },
     )

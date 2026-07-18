@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 storage/
+# Windows/WSL Mark-of-the-Web metadata
+*:Zone.Identifier

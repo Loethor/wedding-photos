@@ -1,42 +1,51 @@
 {% extends "base.html" %}
 
-{% block title %}
-{{ person }}
-{% endblock %}
-
+{% block title %}{{ display }} · Luis &amp; Cristina{% endblock %}
+{% block nav_gallery %}active{% endblock %}
 
 {% block content %}
 
-<a class="button" href="/gallery">
-    ← People
+<a class="back-link" href="/gallery">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    Personas
 </a>
 
-<h1>{{ person }}</h1>
-
-<div class="gallery">
-
-    {% for file in files %}
-
-    {% if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"] %}
-
-    <a href="/photo/{{ person }}/{{ file.name | urlencode }}">
-        <img src="/thumbnail/{{ person }}/{{ file.stem | urlencode }}.jpg">
-    </a>
-
-    {% elif file.suffix.lower() in [".mp4", ".mov"] %}
-
-    <video controls width="300">
-        <source src="/video/{{ person }}/{{ file.name | urlencode }}">
-    </video>
-
-    <a href="/download/{{ person }}/{{ file.name | urlencode }}">
-        Download
-    </a>
-
-    {% endif %}
-
-    {% endfor %}
-
+<div class="page-head">
+    <div class="eyebrow">Álbum de</div>
+    <h1>{{ display }}</h1>
+    <p>{{ files | length }} recuerdo{{ "s" if files | length != 1 }} compartido{{ "s" if files | length != 1 }}.</p>
 </div>
+
+{% if files %}
+<div class="gallery">
+    {% for file in files %}
+    {% set is_video = file.suffix.lower() in [".mp4", ".mov", ".m4v"] %}
+    <button class="tile" data-index="{{ loop.index0 }}">
+        {% if is_video %}
+        <video muted playsinline preload="metadata">
+            <source src="/video/{{ person }}/{{ file.name | urlencode }}">
+        </video>
+        <span class="badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        {% else %}
+        <img loading="lazy" src="/thumbnail/{{ person }}/{{ file.stem | urlencode }}.jpg" alt="{{ file.name }}">
+        {% endif %}
+    </button>
+    {% endfor %}
+</div>
+
+<script type="application/json" id="gallery-data">
+[
+{% for file in files %}
+{% set is_video = file.suffix.lower() in [".mp4", ".mov", ".m4v"] %}
+{"type":"{{ 'video' if is_video else 'image' }}","full":"{{ ('/video/' if is_video else '/photo/') ~ person ~ '/' ~ (file.name | urlencode) }}","download":"/download/{{ person }}/{{ file.name | urlencode }}","name":{{ file.name | tojson }},"who":{{ display | tojson }}}{{ "," if not loop.last }}
+{% endfor %}
+]
+</script>
+
+{% else %}
+<div class="empty">Esta persona todavía no ha subido nada.</div>
+{% endif %}
 
 {% endblock %}

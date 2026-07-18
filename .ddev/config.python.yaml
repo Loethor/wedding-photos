@@ -1,0 +1,14 @@
+# Python/FastAPI runtime for this project (merged into .ddev/config.yaml).
+webimage_extra_packages:
+  - ffmpeg
+
+web_environment:
+  - WEDDING_PASSWORD=wedding
+  - SECRET_KEY=8c469f186fa71a40f6d01e533e6bf08676ef59d466756f350134e45a0ac9c196
+
+# Run the FastAPI app with uvicorn inside the web container on port 8000.
+# nginx (see .ddev/nginx_full/nginx-site.conf) proxies the project URL to it.
+web_extra_daemons:
+  - name: uvicorn
+    command: "uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    directory: /var/www/html

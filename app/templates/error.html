@@ -1,19 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}
-Error
-{% endblock %}
+{% block title %}Algo salió mal · Luis &amp; Cristina{% endblock %}
 
 {% block content %}
 
-<h1>😢 Upload failed</h1>
+<style>
+    .err-wrap {
+        max-width: 480px;
+        margin: 6vh auto 0;
+        text-align: center;
+    }
 
-<p>
-    {{ message }}
-</p>
+    .err-wrap .mark {
+        width: 62px;
+        height: 62px;
+        border-radius: 999px;
+        background: rgba(154, 59, 47, .1);
+        color: #9a3b2f;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 20px;
+    }
 
-<a class="button" href="/">
-    Try again
-</a>
+    .err-wrap h1 {
+        font-size: clamp(34px, 6vw, 46px);
+    }
+
+    .err-wrap p {
+        color: var(--ink-2);
+        margin: 12px auto 26px;
+        max-width: 38ch;
+    }
+</style>
+
+<div class="err-wrap">
+    <div class="mark">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+    </div>
+    <h1>Algo salió mal</h1>
+    <p>{{ message }}</p>
+    <a class="btn btn-primary" href="/">Volver a intentarlo</a>
+</div>
 
 {% endblock %}
