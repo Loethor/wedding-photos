@@ -35,7 +35,7 @@ def login(
     password: str = Form(...),
 ):
 
-    ip = request.client.host
+    ip = request.client.host if request.client else "unknown"
 
     if not login_limiter.allow(ip):
         logger.warning(

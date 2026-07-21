@@ -1,5 +1,6 @@
 from fastapi import (
     APIRouter,
+    HTTPException,
     Request,
     UploadFile,
     File,
@@ -8,7 +9,7 @@ from fastapi import (
 from starlette.concurrency import run_in_threadpool
 
 from app.config import MAX_UPLOAD_SIZE
-from app.services.storage import save_file, set_display_name
+from app.services.storage import sanitize_folder_name, save_file, set_display_name
 from app.services.thumbnails import convert_heif_to_jpeg, create_thumbnail
 from app.logger import logger
 from app.web import templates
@@ -24,6 +25,14 @@ async def upload(
     files: list[UploadFile] = File(...),
 ):
     username = f"{first_name}_{last_name}"
+
+    # El nombre debe producir una carpeta válida. Se translitera cualquier alfabeto a
+    # ASCII (griego, cirílico, árabe…), así que solo queda vacío si no tiene ninguna
+    # letra (p. ej. solo emojis/símbolos); en ese caso rechazamos la subida en vez de
+    # dejar los archivos sueltos en la raíz del almacenamiento.
+    if not sanitize_folder_name(username):
+        raise HTTPException(status_code=400, detail="errors.invalid_name")
+
     display_name = f"{first_name.strip()} {last_name.strip()}"
     uploaded: list[str] = []
     failed: list[str] = []

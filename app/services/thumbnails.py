@@ -102,23 +102,39 @@ def create_video_thumbnail(
     thumbnail_path: Path,
 ):
     width, height = THUMBNAIL_SIZE
-    subprocess.run(
-        [
-            "ffmpeg",
-            "-y",
-            "-ss",
-            "00:00:01",
-            "-i",
-            str(video_path),
-            "-frames:v",
-            "1",
-            # Ajustar a la caja de la miniatura sin ampliar vídeos pequeños.
-            "-vf",
-            f"scale='min({width},iw)':'min({height},ih)':"
-            "force_original_aspect_ratio=decrease",
-            str(thumbnail_path),
-        ],
-        check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+    # Ajustar a la caja de la miniatura sin ampliar vídeos pequeños.
+    scale = (
+        f"scale='min({width},iw)':'min({height},ih)':"
+        "force_original_aspect_ratio=decrease"
     )
+
+    # Intentamos el frame del segundo 1; si el vídeo dura menos, ffmpeg no encuentra
+    # frame y falla, así que caemos al inicio (segundo 0) antes de darnos por vencidos.
+    last_error: subprocess.CalledProcessError | None = None
+    for seek in ("00:00:01", "00:00:00"):
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg",
+                    "-y",
+                    "-ss",
+                    seek,
+                    "-i",
+                    str(video_path),
+                    "-frames:v",
+                    "1",
+                    "-vf",
+                    scale,
+                    str(thumbnail_path),
+                ],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return
+        except subprocess.CalledProcessError as exc:
+            last_error = exc
+
+    # El bucle siempre se ejecuta, así que si llegamos aquí hubo al menos un error.
+    assert last_error is not None
+    raise last_error

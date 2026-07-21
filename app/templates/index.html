@@ -16,11 +16,11 @@
         <div class="field-row">
             <label class="field">
                 <span class="lbl">{{ t("home.first_name") }}</span>
-                <input name="first_name" type="text" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ]+" title="{{ t('home.one_word') }}" placeholder="{{ t('home.first_name_placeholder') }}" autocomplete="given-name">
+                <input name="first_name" type="text" required pattern="[\p{L}\p{M}][\p{L}\p{M} .'\-]*" title="{{ t('home.name_hint') }}" placeholder="{{ t('home.first_name_placeholder') }}" autocomplete="given-name">
             </label>
             <label class="field">
                 <span class="lbl">{{ t("home.last_name") }}</span>
-                <input name="last_name" type="text" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ]+" title="{{ t('home.one_word') }}" placeholder="{{ t('home.last_name_placeholder') }}" autocomplete="family-name">
+                <input name="last_name" type="text" required pattern="[\p{L}\p{M}][\p{L}\p{M} .'\-]*" title="{{ t('home.name_hint') }}" placeholder="{{ t('home.last_name_placeholder') }}" autocomplete="family-name">
             </label>
         </div>
 

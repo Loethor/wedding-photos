@@ -24,7 +24,7 @@
         "last_name": "Last name",
         "first_name_placeholder": "e.g. Mary",
         "last_name_placeholder": "e.g. Smith",
-        "one_word": "A single word",
+        "name_hint": "Letters, spaces and hyphens only",
         "dropzone_title": "Drag your photos here",
         "dropzone_sub": "or tap to choose from your device · photos and videos",
         "submit": "Upload memories"
@@ -87,6 +87,8 @@
     "errors": {
         "too_many_attempts": "Too many attempts. Please wait a moment and try again.",
         "invalid_path": "Invalid path.",
+        "invalid_name": "That name isn't valid. Use at least one letter.",
+        "bad_request": "The request isn't valid. Check your details and try again.",
         "file_not_found": "File not found.",
         "video_not_found": "Video not found.",
         "thumbnail_not_found": "Thumbnail not found.",

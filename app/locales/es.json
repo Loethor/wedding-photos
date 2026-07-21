@@ -24,7 +24,7 @@
         "last_name": "Apellido",
         "first_name_placeholder": "Ej. María",
         "last_name_placeholder": "Ej. García",
-        "one_word": "Una sola palabra",
+        "name_hint": "Solo letras, espacios y guiones",
         "dropzone_title": "Arrastra tus fotos aquí",
         "dropzone_sub": "o toca para elegir desde tu dispositivo · fotos y vídeos",
         "submit": "Subir recuerdos"
@@ -87,6 +87,8 @@
     "errors": {
         "too_many_attempts": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
         "invalid_path": "Ruta no válida.",
+        "invalid_name": "El nombre no es válido. Usa al menos una letra.",
+        "bad_request": "La solicitud no es válida. Revisa los datos e inténtalo de nuevo.",
         "file_not_found": "Archivo no encontrado.",
         "video_not_found": "Vídeo no encontrado.",
         "thumbnail_not_found": "Miniatura no encontrada.",

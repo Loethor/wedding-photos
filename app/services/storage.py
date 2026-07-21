@@ -1,11 +1,20 @@
 from pathlib import Path
-import unicodedata
 import re
+
+from anyascii import anyascii
+
 from app.config import PHOTO_STORAGE, UPLOAD_CHUNK_SIZE
 
 
 def get_user_folder(username: str) -> Path:
     safe_name = sanitize_folder_name(username)
+
+    # Si el nombre queda vacío tras sanitizar (sin ninguna letra transliterable, p. ej.
+    # solo emojis), evitamos que `PHOTO_STORAGE / ""` colapse a la raíz del almacenamiento
+    # y guarde ahí los archivos sueltos. La subida se valida antes en la ruta; esto es la
+    # red de seguridad.
+    if not safe_name:
+        raise ValueError("Invalid folder name")
 
     folder = PHOTO_STORAGE / safe_name
 
@@ -55,12 +64,14 @@ def unique_path(folder: Path, filename: str) -> Path:
 
 
 def save_file(username: str, filename: str, source, max_size: int) -> tuple[Path, int]:
-    folder = get_user_folder(username)
-
     filename = sanitize_filename(filename)
 
     if Path(filename).suffix.lower() not in ALLOWED_EXTENSIONS:
         raise ValueError("File type not allowed")
+
+    # Crear la carpeta del usuario solo cuando ya sabemos que el archivo es válido,
+    # así una subida de puros archivos no válidos no deja un álbum vacío en la galería.
+    folder = get_user_folder(username)
 
     target = unique_path(folder, filename)
 
@@ -81,10 +92,10 @@ def save_file(username: str, filename: str, source, max_size: int) -> tuple[Path
 
 
 def sanitize_folder_name(value: str) -> str:
-    # Quitar acentos
-    value = (
-        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
-    )
+    # Transliterar cualquier alfabeto a ASCII legible antes de limpiar: cubre latino
+    # con diacríticos (Müller, Núñez), griego (Γιώργος→Giorgos), cirílico/búlgaro
+    # (Мария→Mariia), turco (Çelik→Celik), árabe/persa (محمد→mhmd), etc.
+    value = anyascii(value)
 
     # Sustituir espacios y caracteres raros
     value = re.sub(r"[^a-zA-Z0-9]+", "_", value)
@@ -97,17 +108,23 @@ def sanitize_filename(value: str) -> str:
     # quitar ruta si viene incluida
     value = Path(value).name
 
-    # normalizar unicode (HEIC/iPhone puede traer caracteres raros)
-    value = (
-        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
-    )
-
-    # conservar extensión
+    # La extensión se toma del nombre ORIGINAL, antes de transliterar: si no, un
+    # nombre como "写真.jpg" quedaría en ".jpg", que Path interpreta como fichero
+    # oculto sin extensión, y perderíamos el tipo (la foto se rechazaría).
     suffix = Path(value).suffix.lower()
     stem = Path(value).stem
 
+    # Transliterar cualquier alfabeto a ASCII legible (griego, cirílico, árabe…).
+    stem = anyascii(stem)
+
     stem = re.sub(r"[^a-zA-Z0-9]+", "_", stem)
     stem = stem.strip("_")
+
+    # Si el nombre queda vacío tras sanitizar (p. ej. solo emojis/símbolos, sin ninguna
+    # letra), usamos uno genérico en vez de perder el archivo; unique_path resuelve las
+    # posibles colisiones.
+    if not stem:
+        stem = "archivo"
 
     return f"{stem}{suffix}"
 
