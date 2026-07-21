@@ -11,7 +11,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             "/favicon.ico",
         }
 
-        if request.url.path in public_paths:
+        if request.url.path in public_paths or request.url.path.startswith("/static/"):
             return await call_next(request)
 
         if request.session.get("authenticated"):

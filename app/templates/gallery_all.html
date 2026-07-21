@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Todas las fotos · Luis &amp; Cristina{% endblock %}
+{% block title %}{{ t("titles.gallery_all") }} · Luis &amp; Cristina{% endblock %}
 {% block nav_gallery %}active{% endblock %}
 
 {% block content %}
 
 <a class="back-link" href="/gallery">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-    Galería
+    {{ t("gallery_all.back") }}
 </a>
 
 <div class="page-head">
-    <div class="eyebrow">El álbum de todos</div>
-    <h1>Todas las fotos</h1>
-    <p>Cada recuerdo que habéis compartido de nuestro gran día. Toca una foto para verla en grande o descargarla.</p>
+    <div class="eyebrow">{{ t("gallery_all.eyebrow") }}</div>
+    <h1>{{ t("gallery_all.heading") }}</h1>
+    <p>{{ t("gallery_all.lede") }}</p>
 </div>
 
 {% if files %}
@@ -46,7 +46,7 @@
 </script>
 
 {% else %}
-<div class="empty">Todavía no hay fotos. ¡Sé el primero en subir un recuerdo!</div>
+<div class="empty">{{ t("gallery_all.empty") }}</div>
 {% endif %}
 
 {% endblock %}

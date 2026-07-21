@@ -1,90 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}¡Gracias! · Luis &amp; Cristina{% endblock %}
+{% block title %}{{ t("titles.success") }} · Luis &amp; Cristina{% endblock %}
 {% block nav_upload %}active{% endblock %}
 
 {% block content %}
-
-<style>
-    .done {
-        max-width: 520px;
-        margin: 4vh auto 0;
-        text-align: center;
-    }
-
-    .done .check {
-        width: 66px;
-        height: 66px;
-        border-radius: 999px;
-        background: var(--ink);
-        color: #fff;
-        display: grid;
-        place-items: center;
-        margin: 0 auto 22px;
-    }
-
-    .done h1 {
-        font-size: clamp(38px, 7vw, 54px);
-    }
-
-    .done p {
-        color: var(--ink-2);
-        font-size: 17px;
-        margin: 14px auto 0;
-        max-width: 40ch;
-    }
-
-    .done .count-pill {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 8px 18px;
-        border-radius: 999px;
-        background: rgba(61, 74, 51, .08);
-        font-weight: 700;
-        font-size: 14px;
-    }
-
-    .done .failed-note {
-        margin: 16px auto 0;
-        max-width: 40ch;
-        font-size: 14px;
-        color: #9a3b2f;
-        font-weight: 600;
-    }
-
-    .done .actions {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 30px;
-    }
-</style>
 
 <div class="done">
     <div class="check">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
     </div>
     {% if count %}
-    <h1>¡Recuerdos guardados!</h1>
-    <p>Muchas gracias por compartir tus fotos y vídeos con nosotros. Ya forman parte de nuestra galería.</p>
-    <div class="count-pill">{{ count }} archivo{{ "s" if count != 1 }} subido{{ "s" if count != 1 }}</div>
+    <h1>{{ t("success.saved_heading") }}</h1>
+    <p>{{ t("success.saved_text") }}</p>
+    <div class="count-pill">{{ plural("success.count_pill", count) }}</div>
     {% else %}
-    <h1>No se pudo subir nada</h1>
-    <p>No hemos podido guardar tus archivos. Comprueba que sean fotos o vídeos e inténtalo de nuevo.</p>
+    <h1>{{ t("success.none_heading") }}</h1>
+    <p>{{ t("success.none_text") }}</p>
     {% endif %}
     {% if failed %}
-    <p class="failed-note">
-        {% if failed | length == 1 %}
-        1 archivo no se pudo subir (formato no válido o demasiado grande).
-        {% else %}
-        {{ failed | length }} archivos no se pudieron subir (formato no válido o demasiado grandes).
-        {% endif %}
-    </p>
+    <p class="failed-note">{{ plural("success.failed_note", failed | length) }}</p>
     {% endif %}
     <div class="actions">
-        <a class="btn btn-primary" href="/">Subir más</a>
-        <a class="btn btn-ghost" href="/gallery">Ver la galería</a>
+        <a class="btn btn-primary" href="/">{{ t("success.upload_more") }}</a>
+        <a class="btn btn-ghost" href="/gallery">{{ t("success.view_gallery") }}</a>
     </div>
 </div>
 

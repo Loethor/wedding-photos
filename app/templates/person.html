@@ -7,13 +7,13 @@
 
 <a class="back-link" href="/gallery">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-    Personas
+    {{ t("person.back") }}
 </a>
 
 <div class="page-head">
-    <div class="eyebrow">Álbum de</div>
+    <div class="eyebrow">{{ t("person.eyebrow") }}</div>
     <h1>{{ display }}</h1>
-    <p>{{ files | length }} recuerdo{{ "s" if files | length != 1 }} compartido{{ "s" if files | length != 1 }}.</p>
+    <p>{{ plural("person.memories_count", files | length) }}</p>
 </div>
 
 {% if files %}
@@ -45,7 +45,7 @@
 </script>
 
 {% else %}
-<div class="empty">Esta persona todavía no ha subido nada.</div>
+<div class="empty">{{ t("person.empty") }}</div>
 {% endif %}
 
 {% endblock %}

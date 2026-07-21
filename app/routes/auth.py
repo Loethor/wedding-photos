@@ -45,7 +45,7 @@ def login(
 
         raise HTTPException(
             status_code=429,
-            detail="Too many attempts",
+            detail="errors.too_many_attempts",
         )
 
     if password != WEDDING_PASSWORD:

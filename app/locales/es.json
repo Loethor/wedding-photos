@@ -1,0 +1,107 @@
+{
+    "nav": {
+        "upload": "Subir fotos",
+        "gallery": "Galería"
+    },
+    "lightbox": {
+        "close": "Cerrar",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "download": "Descargar"
+    },
+    "titles": {
+        "home": "Comparte tus fotos",
+        "gallery": "Galería",
+        "gallery_all": "Todas las fotos",
+        "login": "Acceso",
+        "error": "Algo salió mal",
+        "success": "¡Gracias!"
+    },
+    "home": {
+        "date": "4 de julio de 2026 · Ponferrada, España",
+        "lede": "Gracias por celebrar nuestro día con nosotros. Sube aquí las fotos y vídeos que hayas hecho — quedarán guardados en nuestra galería para siempre.",
+        "first_name": "Nombre",
+        "last_name": "Apellido",
+        "first_name_placeholder": "Ej. María",
+        "last_name_placeholder": "Ej. García",
+        "one_word": "Una sola palabra",
+        "dropzone_title": "Arrastra tus fotos aquí",
+        "dropzone_sub": "o toca para elegir desde tu dispositivo · fotos y vídeos",
+        "submit": "Subir recuerdos"
+    },
+    "login": {
+        "date": "4 · 07 · 2026 · Ponferrada",
+        "heading": "Fotos de la boda",
+        "hint": "Introduce la contraseña que aparece en tu invitación para entrar.",
+        "wrong_password": "Contraseña incorrecta. Vuelve a intentarlo.",
+        "password_placeholder": "Contraseña",
+        "submit": "Entrar"
+    },
+    "gallery": {
+        "eyebrow": "4 de julio de 2026 · Ponferrada",
+        "heading": "Nuestra galería",
+        "lede": "Todas las fotos y vídeos que habéis capturado, reunidos en un mismo lugar.",
+        "view_all": "Ver todas las fotos",
+        "files_count": {
+            "one": "{n} archivo",
+            "other": "{n} archivos"
+        },
+        "empty": "Todavía no hay álbumes. En cuanto alguien suba fotos, aparecerán aquí."
+    },
+    "gallery_all": {
+        "back": "Galería",
+        "eyebrow": "El álbum de todos",
+        "heading": "Todas las fotos",
+        "lede": "Cada recuerdo que habéis compartido de nuestro gran día. Toca una foto para verla en grande o descargarla.",
+        "empty": "Todavía no hay fotos. ¡Sé el primero en subir un recuerdo!"
+    },
+    "person": {
+        "back": "Personas",
+        "eyebrow": "Álbum de",
+        "memories_count": {
+            "one": "{n} recuerdo compartido.",
+            "other": "{n} recuerdos compartidos."
+        },
+        "empty": "Esta persona todavía no ha subido nada."
+    },
+    "success": {
+        "saved_heading": "¡Recuerdos guardados!",
+        "saved_text": "Muchas gracias por compartir tus fotos y vídeos con nosotros. Ya forman parte de nuestra galería.",
+        "none_heading": "No se pudo subir nada",
+        "none_text": "No hemos podido guardar tus archivos. Comprueba que sean fotos o vídeos e inténtalo de nuevo.",
+        "count_pill": {
+            "one": "{n} archivo subido",
+            "other": "{n} archivos subidos"
+        },
+        "failed_note": {
+            "one": "1 archivo no se pudo subir (formato no válido o demasiado grande).",
+            "other": "{n} archivos no se pudieron subir (formato no válido o demasiado grandes)."
+        },
+        "upload_more": "Subir más",
+        "view_gallery": "Ver la galería"
+    },
+    "error": {
+        "heading": "Algo salió mal",
+        "retry": "Volver a intentarlo"
+    },
+    "errors": {
+        "too_many_attempts": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+        "invalid_path": "Ruta no válida.",
+        "file_not_found": "Archivo no encontrado.",
+        "video_not_found": "Vídeo no encontrado.",
+        "thumbnail_not_found": "Miniatura no encontrada.",
+        "album_not_found": "Ese álbum no existe."
+    },
+    "js": {
+        "selected": {
+            "one": "{n} archivo seleccionado",
+            "other": "{n} archivos seleccionados"
+        },
+        "uploading": {
+            "one": "Subiendo {n} archivo…",
+            "other": "Subiendo {n} archivos…"
+        },
+        "uploading_percent": "Subiendo… {p}%",
+        "error": "Ha ocurrido un error. Inténtalo de nuevo."
+    }
+}

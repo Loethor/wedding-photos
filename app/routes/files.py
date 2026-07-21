@@ -22,7 +22,7 @@ def validate_file(file, error_message: str):
     if not safe_path(file):
         raise HTTPException(
             status_code=400,
-            detail="Invalid path",
+            detail="errors.invalid_path",
         )
 
     if not file.exists():
@@ -39,7 +39,7 @@ def serve_photo(person: str, filename: str):
 
     validate_file(
         file,
-        "File not found",
+        "errors.file_not_found",
     )
 
     return FileResponse(file)
@@ -52,7 +52,7 @@ def serve_video(person: str, filename: str):
 
     validate_file(
         file,
-        "Video not found",
+        "errors.video_not_found",
     )
 
     return FileResponse(
@@ -68,7 +68,7 @@ def download_file(person: str, filename: str):
 
     validate_file(
         file,
-        "File not found",
+        "errors.file_not_found",
     )
 
     return FileResponse(
@@ -85,7 +85,7 @@ def serve_thumbnail(person: str, filename: str):
     if not safe_path(file):
         raise HTTPException(
             status_code=400,
-            detail="Invalid path",
+            detail="errors.invalid_path",
         )
 
     # Si la miniatura no existe (p. ej. falló al subir), intentar regenerarla.
@@ -95,7 +95,7 @@ def serve_thumbnail(person: str, filename: str):
     if not file.exists():
         raise HTTPException(
             status_code=404,
-            detail="Thumbnail not found",
+            detail="errors.thumbnail_not_found",
         )
 
     return FileResponse(file)

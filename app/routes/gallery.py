@@ -64,7 +64,7 @@ def gallery_person(request: Request, person: str):
     if person not in list_people():
         raise HTTPException(
             status_code=404,
-            detail="Ese álbum no existe.",
+            detail="errors.album_not_found",
         )
 
     files = list(list_files(PHOTO_STORAGE / person))

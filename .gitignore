@@ -4,3 +4,7 @@ __pycache__/
 storage/
 # Windows/WSL Mark-of-the-Web metadata
 *:Zone.Identifier
+# Entorno local / editor / instrucciones de Claude (no versionados)
+.vscode/
+.ddev/
+CLAUDE.md
