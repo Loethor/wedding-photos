@@ -1,0 +1,109 @@
+{
+    "nav": {
+        "upload": "Upload photos",
+        "gallery": "Gallery"
+    },
+    "lightbox": {
+        "close": "Close",
+        "prev": "Previous",
+        "next": "Next",
+        "download": "Download"
+    },
+    "titles": {
+        "home": "Share your photos",
+        "gallery": "Gallery",
+        "gallery_all": "All photos",
+        "login": "Sign in",
+        "error": "Something went wrong",
+        "success": "Thank you!"
+    },
+    "home": {
+        "date": "July 4, 2026 · Ponferrada, Spain",
+        "lede": "Thank you for celebrating our day with us. Upload the photos and videos you took here — they'll be kept in our gallery forever.",
+        "first_name": "First name",
+        "last_name": "Last name",
+        "first_name_placeholder": "e.g. Mary",
+        "last_name_placeholder": "e.g. Smith",
+        "name_hint": "Letters, spaces and hyphens only",
+        "dropzone_title": "Drag your photos here",
+        "dropzone_sub": "or tap to choose from your device · photos and videos",
+        "submit": "Upload memories"
+    },
+    "login": {
+        "date": "July 4, 2026 · Ponferrada",
+        "heading": "Wedding photos",
+        "hint": "Enter the password from your invitation to get in.",
+        "wrong_password": "Wrong password. Please try again.",
+        "password_placeholder": "Password",
+        "submit": "Sign in"
+    },
+    "gallery": {
+        "eyebrow": "July 4, 2026 · Ponferrada",
+        "heading": "Our gallery",
+        "lede": "All the photos and videos you've captured, gathered in one place.",
+        "view_all": "See all photos",
+        "files_count": {
+            "one": "{n} file",
+            "other": "{n} files"
+        },
+        "empty": "There are no albums yet. As soon as someone uploads photos, they'll appear here."
+    },
+    "gallery_all": {
+        "back": "Gallery",
+        "eyebrow": "Everyone's album",
+        "heading": "All photos",
+        "lede": "Every memory you've shared from our big day. Tap a photo to view it larger or download it.",
+        "empty": "There are no photos yet. Be the first to upload a memory!"
+    },
+    "person": {
+        "back": "People",
+        "eyebrow": "Album of",
+        "memories_count": {
+            "one": "{n} memory shared.",
+            "other": "{n} memories shared."
+        },
+        "empty": "This person hasn't uploaded anything yet."
+    },
+    "success": {
+        "saved_heading": "Memories saved!",
+        "saved_text": "Thank you so much for sharing your photos and videos with us. They're now part of our gallery.",
+        "none_heading": "Nothing was uploaded",
+        "none_text": "We couldn't save your files. Make sure they are photos or videos and try again.",
+        "count_pill": {
+            "one": "{n} file uploaded",
+            "other": "{n} files uploaded"
+        },
+        "failed_note": {
+            "one": "1 file couldn't be uploaded (invalid format or too large).",
+            "other": "{n} files couldn't be uploaded (invalid format or too large)."
+        },
+        "upload_more": "Upload more",
+        "view_gallery": "See the gallery"
+    },
+    "error": {
+        "heading": "Something went wrong",
+        "retry": "Try again"
+    },
+    "errors": {
+        "too_many_attempts": "Too many attempts. Please wait a moment and try again.",
+        "invalid_path": "Invalid path.",
+        "invalid_name": "That name isn't valid. Use at least one letter.",
+        "bad_request": "The request isn't valid. Check your details and try again.",
+        "file_not_found": "File not found.",
+        "video_not_found": "Video not found.",
+        "thumbnail_not_found": "Thumbnail not found.",
+        "album_not_found": "That album doesn't exist."
+    },
+    "js": {
+        "selected": {
+            "one": "{n} file selected",
+            "other": "{n} files selected"
+        },
+        "uploading": {
+            "one": "Uploading {n} file…",
+            "other": "Uploading {n} files…"
+        },
+        "uploading_percent": "Uploading… {p}%",
+        "error": "An error occurred. Please try again."
+    }
+}

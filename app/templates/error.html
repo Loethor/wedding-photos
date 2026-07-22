@@ -1,19 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}
-Error
-{% endblock %}
+{% block title %}{{ t("titles.error") }} · Luis &amp; Cristina{% endblock %}
 
 {% block content %}
 
-<h1>😢 Upload failed</h1>
-
-<p>
-    {{ message }}
-</p>
-
-<a class="button" href="/">
-    Try again
-</a>
+<div class="err-wrap">
+    <div class="mark">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+    </div>
+    <h1>{{ t("error.heading") }}</h1>
+    <p>{{ message }}</p>
+    <a class="btn btn-primary" href="/">{{ t("error.retry") }}</a>
+</div>
 
 {% endblock %}

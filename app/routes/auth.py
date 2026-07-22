@@ -35,7 +35,7 @@ def login(
     password: str = Form(...),
 ):
 
-    ip = request.client.host
+    ip = request.client.host if request.client else "unknown"
 
     if not login_limiter.allow(ip):
         logger.warning(
@@ -45,7 +45,7 @@ def login(
 
         raise HTTPException(
             status_code=429,
-            detail="Too many attempts",
+            detail="errors.too_many_attempts",
         )
 
     if password != WEDDING_PASSWORD:

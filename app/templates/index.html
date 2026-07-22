@@ -1,96 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}
-Upload Photos
-{% endblock %}
-
+{% block title %}{{ t("titles.home") }} · Luis &amp; Cristina{% endblock %}
+{% block nav_upload %}active{% endblock %}
 
 {% block content %}
 
-<h1>📸 Wedding Photos</h1>
+<div class="hero">
+    <div class="date">{{ t("home.date") }}</div>
+    <h1>Luis <span class="amp">&amp;</span> Cristina</h1>
+    <p class="lede">{{ t("home.lede") }}</p>
+</div>
 
-<form id="upload-form">
+<div class="upload-card">
+    <form id="upload-form">
+        <div class="field-row">
+            <label class="field">
+                <span class="lbl">{{ t("home.first_name") }}</span>
+                <input name="first_name" type="text" required pattern="[\p{L}\p{M}][\p{L}\p{M} .'\-]*" title="{{ t('home.name_hint') }}" placeholder="{{ t('home.first_name_placeholder') }}" autocomplete="given-name">
+            </label>
+            <label class="field">
+                <span class="lbl">{{ t("home.last_name") }}</span>
+                <input name="last_name" type="text" required pattern="[\p{L}\p{M}][\p{L}\p{M} .'\-]*" title="{{ t('home.name_hint') }}" placeholder="{{ t('home.last_name_placeholder') }}" autocomplete="family-name">
+            </label>
+        </div>
 
-    <label>
-        Nombre/Name:
-        <input name="first_name" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ]+" title="Una palabra/One word">
-    </label>
+        <label class="dropzone" id="dropzone">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 16V4m0 0 4 4m-4-4L8 8" />
+                <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+            </svg>
+            <div class="dz-title">{{ t("home.dropzone_title") }}</div>
+            <div class="dz-sub">{{ t("home.dropzone_sub") }}</div>
+            <input id="files" type="file" name="files" multiple accept="image/*,video/*" required>
+        </label>
 
-    <br><br>
+        <div class="filelist" id="filelist"></div>
 
-    <label>
-        Apellido/Last name:
-        <input name="last_name" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ]+" title="Una palabra/One word">
-    </label>
+        <div class="submit-row">
+            <button type="submit" class="btn btn-primary" id="submit-btn">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0 6 6m-6-6L6 11"/></svg>
+                {{ t("home.submit") }}
+            </button>
+        </div>
 
-    <br><br>
+        <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+        <p id="status"></p>
+    </form>
+</div>
 
-    <label>
-        Select photos/videos:
-        <input id="files" type="file" name="files" multiple accept="image/*,video/*" required>
-    </label>
+{% endblock %}
 
-    <br><br>
-
-    <button type="submit">
-        Upload
-    </button>
-
-</form>
-
-<p id="status"></p>
-
-
-<script>
-
-    const form = document.getElementById("upload-form");
-    const status = document.getElementById("status");
-
-    form.addEventListener("submit", function (event) {
-
-        event.preventDefault();
-
-        const files = document.getElementById("files").files;
-
-        status.innerText =
-            `Uploading 0 / ${files.length} files`;
-
-        const data = new FormData(form);
-
-        const xhr = new XMLHttpRequest();
-
-        xhr.open("POST", "/upload");
-
-
-        xhr.upload.onprogress = function (event) {
-
-            if (event.lengthComputable) {
-
-                const percent =
-                    Math.round(
-                        (event.loaded / event.total) * 100
-                    );
-
-                status.innerText =
-                    `Uploading... ${percent}% (${files.length} files)`;
-            }
-        };
-
-
-        xhr.onload = function () {
-
-            document.open();
-            document.write(xhr.responseText);
-            document.close();
-
-        };
-
-
-        xhr.send(data);
-
-    });
-
-</script>
-
-
+{% block scripts %}
+<script src="/static/js/upload.js" defer></script>
 {% endblock %}

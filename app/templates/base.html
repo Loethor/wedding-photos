@@ -1,65 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ lang }}">
 
 <head>
-    <title>{% block title %}Wedding Photos{% endblock %}</title>
-
+    <meta charset="utf-8">
+    <title>{% block title %}Luis &amp; Cristina{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .nav {
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 18px;
-            font-size: 16px;
-            background: #eee;
-            border-radius: 8px;
-            text-decoration: none;
-            color: black;
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill,
-                    minmax(150px, 1fr));
-            gap: 10px;
-        }
-
-        .gallery img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-    </style>
-
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 
 <body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="/">Luis <span>&amp;</span> Cristina</a>
+            <nav class="navlinks">
+                <a class="navlink {% block nav_upload %}{% endblock %}" href="/">{{ t("nav.upload") }}</a>
+                <a class="navlink {% block nav_gallery %}{% endblock %}" href="/gallery">{{ t("nav.gallery") }}</a>
+            </nav>
+        </div>
+    </header>
 
-    <div class="nav">
-        <a class="button" href="/">
-            🏠 Home
-        </a>
+    <main class="wrap">
+        {% block content %}{% endblock %}
+    </main>
 
-        <a class="button" href="/gallery">
-            🖼 Gallery
-        </a>
+    <!-- lightbox -->
+    <div class="lb" id="lightbox" aria-hidden="true">
+        <div class="lb-bar">
+            <div class="lb-meta">
+                <div class="name" id="lb-name"></div>
+                <div class="who" id="lb-who"></div>
+            </div>
+            <div class="lb-actions">
+                <div class="lb-meta" id="lb-count"></div>
+                <a class="lb-btn" id="lb-download" href="#" download>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16" />
+                    </svg>
+                    <span class="label">{{ t("lightbox.download") }}</span>
+                </a>
+                <button class="lb-btn lb-icon" id="lb-close" aria-label="{{ t('lightbox.close') }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M6 6l12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="lb-stage" id="lb-stage">
+            <button class="lb-nav prev" id="lb-prev" aria-label="{{ t('lightbox.prev') }}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 5l-7 7 7 7" />
+                </svg>
+            </button>
+            <div id="lb-media"></div>
+            <button class="lb-nav next" id="lb-next" aria-label="{{ t('lightbox.next') }}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
     </div>
 
+    <script>window.I18N = {{ js_i18n | tojson }};</script>
+    <script src="/static/js/lightbox.js" defer></script>
 
-    {% block content %}
-    {% endblock %}
-
-
+    {% block scripts %}{% endblock %}
 </body>
 
 </html>

@@ -1,25 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}
-Upload completed
-{% endblock %}
-
+{% block title %}{{ t("titles.success") }} · Luis &amp; Cristina{% endblock %}
+{% block nav_upload %}active{% endblock %}
 
 {% block content %}
 
-<h1>✅ Upload completed</h1>
-
-<p>
-    Your photos and videos were uploaded successfully.
-</p>
-
-<p>
-    Files uploaded: {{ count }}
-</p>
-
-<a class="button" href="/">
-    Upload more
-</a>
-
+<div class="done">
+    <div class="check">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    {% if count %}
+    <h1>{{ t("success.saved_heading") }}</h1>
+    <p>{{ t("success.saved_text") }}</p>
+    <div class="count-pill">{{ plural("success.count_pill", count) }}</div>
+    {% else %}
+    <h1>{{ t("success.none_heading") }}</h1>
+    <p>{{ t("success.none_text") }}</p>
+    {% endif %}
+    {% if failed %}
+    <p class="failed-note">{{ plural("success.failed_note", failed | length) }}</p>
+    {% endif %}
+    <div class="actions">
+        <a class="btn btn-primary" href="/">{{ t("success.upload_more") }}</a>
+        <a class="btn btn-ghost" href="/gallery">{{ t("success.view_gallery") }}</a>
+    </div>
+</div>
 
 {% endblock %}
